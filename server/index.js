@@ -20,7 +20,12 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 3001;
 
-app.use(cors({ origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], credentials: true }));
+// Allow the deployed frontend origin (Netlify) + local dev
+const ALLOWED_ORIGINS = process.env.CLIENT_URL
+  ? [process.env.CLIENT_URL, 'http://localhost:5173', 'http://127.0.0.1:5173']
+  : ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
+app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(express.json());
 
 // ─── REST API ────────────────────────────────────────────────
@@ -113,7 +118,7 @@ app.get('/api/auth/session', async (req, res) => {
 
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: ALLOWED_ORIGINS,
     methods: ['GET', 'POST'],
     credentials: true
   }

@@ -1,7 +1,7 @@
 // ─── Landing Page Logic — Wallet Connect ──────────────────
 import * as Stellar from './stellar.js';
 
-const API_BASE = '';
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 let userToken = null;
 let userGender = 'any';
@@ -136,7 +136,7 @@ connectFreighterBtn.addEventListener('click', async () => {
     }
   } catch (err) {
     console.error('Freighter connect error:', err);
-    showError('Failed to connect wallet. Is the backend running?');
+    showError('Service temporarily unavailable. Please try again later.');
   } finally {
     setLoading(connectFreighterBtn, false);
   }
@@ -165,7 +165,7 @@ createCustodialBtn.addEventListener('click', async () => {
     }
   } catch (err) {
     console.error('Custodial wallet error:', err);
-    showError('Server unreachable. Is the backend running?');
+    showError('Service temporarily unavailable. Please try again later.');
   } finally {
     setLoading(createCustodialBtn, false);
   }

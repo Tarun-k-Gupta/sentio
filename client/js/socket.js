@@ -1,6 +1,8 @@
 // ─── Socket.IO Client Wrapper ─────────────────────────────
 import { io } from 'socket.io-client';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 let socket = null;
 const eventHandlers = new Map();
 
@@ -10,7 +12,10 @@ const eventHandlers = new Map();
 export function connect() {
   if (socket?.connected) return socket;
 
-  socket = io(window.location.origin, {
+  // In production, connect to the deployed backend URL; in dev, same origin
+  const serverUrl = API_BASE || window.location.origin;
+
+  socket = io(serverUrl, {
     transports: ['websocket', 'polling'],
     reconnection: true,
     reconnectionDelay: 1000,
