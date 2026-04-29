@@ -21,14 +21,25 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 3001;
 
 // Allow the deployed frontend origin (Netlify) + local dev
-const ALLOWED_ORIGINS = process.env.CLIENT_URL
-  ? [process.env.CLIENT_URL, 'http://localhost:5173', 'http://127.0.0.1:5173']
-  : ['http://localhost:5173', 'http://127.0.0.1:5173'];
+const PRODUCTION_URL = 'https://syntio.netlify.app';
+const ALLOWED_ORIGINS = [
+  PRODUCTION_URL,
+  ...(process.env.CLIENT_URL && process.env.CLIENT_URL !== PRODUCTION_URL
+    ? [process.env.CLIENT_URL]
+    : []),
+  'http://localhost:5173',
+  'http://127.0.0.1:5173'
+];
 
 app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(express.json());
 
 // ─── REST API ────────────────────────────────────────────────
+
+// Health check — useful for verifying the backend is alive
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: Date.now(), origins: ALLOWED_ORIGINS });
+});
 
 // Generate auth challenge for wallet signature
 app.get('/api/auth/challenge', (req, res) => {
@@ -334,7 +345,8 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`\n🚀 Knapp server running on http://localhost:${PORT}`);
+  console.log(`\n🚀 Knapp server running on port ${PORT}`);
   console.log(`   Soroban Contract: ${process.env.SOROBAN_CONTRACT_ID || '(not configured — using in-memory)'}`);
-  console.log(`   Network: ${process.env.STELLAR_NETWORK || 'testnet'}\n`);
+  console.log(`   Network: ${process.env.STELLAR_NETWORK || 'testnet'}`);
+  console.log(`   Allowed Origins: ${ALLOWED_ORIGINS.join(', ')}\n`);
 });

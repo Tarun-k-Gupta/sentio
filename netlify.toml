@@ -1,0 +1,17 @@
+[build]
+  base = "client"
+  command = "npm install && npm run build"
+  publish = "dist"
+
+# SPA-style fallback — serve index.html for unknown routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"]}
+
+# Except for actual files (CSS, JS, images, chat.html)
+[[redirects]]
+  from = "/chat.html"
+  to = "/chat.html"
+  status = 200
