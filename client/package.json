@@ -1,0 +1,17 @@
+{
+  "name": "knapp-client",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  },
+  "dependencies": {
+    "@stellar/freighter-api": "^6.0.1",
+    "socket.io-client": "^4.8.1"
+  }
+}

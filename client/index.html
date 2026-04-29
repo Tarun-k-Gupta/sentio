@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knapp — Decentralized Video Chat</title>
+  <meta name="description" content="Meet strangers via random video chat, powered by blockchain reputation on Stellar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <!-- ─── Animated background ─── -->
+  <div class="bg-glow"></div>
+  <div class="bg-grid"></div>
+
+  <!-- ─── Landing Page ─── -->
+  <div id="landing" class="page active">
+    <nav class="navbar">
+      <div class="nav-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">Knapp</span>
+      </div>
+      <div class="nav-badge">
+        <span class="badge-stellar">Powered by Stellar</span>
+      </div>
+    </nav>
+
+    <main class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          Meet Strangers.<br />
+          <span class="gradient-text">Earn Reputation.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Random video chat with on-chain reputation. Be kind, get rewarded.
+          Be toxic, get deprioritized. Powered by Stellar &amp; Soroban.
+        </p>
+
+        <!-- Wallet Connect Section -->
+        <div id="auth-section" class="auth-card">
+
+          <!-- Step 1: Connect Wallet -->
+          <div id="auth-step-wallet" class="auth-step active">
+            <h3>Connect Your Wallet</h3>
+            <p class="auth-hint">Connect with Freighter or create a new wallet instantly</p>
+
+            <div class="wallet-options">
+              <button id="connect-freighter-btn" class="btn btn-wallet btn-freighter">
+                <span class="btn-wallet-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M12 22V12" stroke="currentColor" stroke-width="2"/>
+                    <path d="M22 7L12 12L2 7" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </span>
+                <span class="btn-wallet-content">
+                  <span class="btn-text">Connect with Freighter</span>
+                  <span class="btn-wallet-sub" id="freighter-status">Detecting...</span>
+                </span>
+                <span class="btn-loader"></span>
+              </button>
+
+              <div class="wallet-divider">
+                <span>or</span>
+              </div>
+
+              <button id="create-custodial-btn" class="btn btn-wallet btn-custodial">
+                <span class="btn-wallet-icon">🔐</span>
+                <span class="btn-wallet-content">
+                  <span class="btn-text">I don't have a wallet</span>
+                  <span class="btn-wallet-sub">We'll create one for you (custodial)</span>
+                </span>
+                <span class="btn-loader"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Ready -->
+          <div id="auth-step-ready" class="auth-step">
+            <div class="user-info">
+              <div class="user-avatar" id="user-avatar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 21V19C20 16.79 18.21 15 16 15H8C5.79 15 4 16.79 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </div>
+              <div>
+                <p class="user-wallet-label">
+                  <span id="wallet-type-badge" class="wallet-type-badge">Freighter</span>
+                  Connected
+                </p>
+                <p class="user-wallet" id="user-wallet-display"></p>
+              </div>
+            </div>
+
+            <div class="wallet-rep-display">
+              <div class="rep-circle">
+                <span class="rep-circle-score" id="user-rep-display">50</span>
+                <span class="rep-circle-label">Reputation</span>
+              </div>
+              <div class="rep-bar-container">
+                <div class="rep-bar" id="user-rep-bar" style="width: 50%"></div>
+              </div>
+            </div>
+
+            <div class="preferences">
+              <label class="pref-label">I am</label>
+              <div class="toggle-group" id="gender-select">
+                <button class="toggle-btn active" data-value="any">Any</button>
+                <button class="toggle-btn" data-value="male">Male</button>
+                <button class="toggle-btn" data-value="female">Female</button>
+              </div>
+
+              <label class="pref-label">Looking for</label>
+              <div class="toggle-group" id="gender-pref-select">
+                <button class="toggle-btn active" data-value="any">Anyone</button>
+                <button class="toggle-btn" data-value="male">Male</button>
+                <button class="toggle-btn" data-value="female">Female</button>
+              </div>
+            </div>
+
+            <button id="start-chat-btn" class="btn btn-start">
+              <span class="btn-icon">🎥</span>
+              Start Video Chat
+            </button>
+
+            <button id="disconnect-wallet-btn" class="btn btn-disconnect">
+              Disconnect Wallet
+            </button>
+          </div>
+        </div>
+
+        <div id="auth-error" class="error-msg"></div>
+      </div>
+
+      <!-- Hero visual -->
+      <div class="hero-visual">
+        <div class="floating-card card-1">
+          <span>👍</span> +3 Reputation
+        </div>
+        <div class="floating-card card-2">
+          <span>⚡</span> On-Chain
+        </div>
+        <div class="floating-card card-3">
+          <span>🌐</span> WebRTC P2P
+        </div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

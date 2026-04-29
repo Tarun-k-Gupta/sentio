@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knapp — Video Chat</title>
+  <meta name="description" content="You're in a video chat on Knapp. Talk to strangers, earn reputation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="chat-page">
+  <div class="bg-glow"></div>
+
+  <!-- ─── Video Chat Screen ─── -->
+  <div id="chat-screen" class="chat-container">
+
+    <!-- Top Bar -->
+    <div class="chat-topbar">
+      <div class="topbar-left">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text-sm">Knapp</span>
+      </div>
+      <div class="topbar-center">
+        <div id="chat-status" class="status-badge status-idle">
+          <span class="status-dot"></span>
+          <span class="status-text">Ready</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="rep-badge" id="my-rep-badge" title="Your reputation">
+          <span class="rep-icon">⭐</span>
+          <span class="rep-score" id="my-rep-score">50</span>
+        </div>
+        <div class="timer" id="session-timer">00:00</div>
+      </div>
+    </div>
+
+    <!-- Video Area -->
+    <div class="video-area">
+      <!-- Remote Video (Stranger) -->
+      <div class="video-wrapper remote-video-wrapper">
+        <video id="remote-video" autoplay playsinline></video>
+        <div id="remote-placeholder" class="video-placeholder">
+          <div class="placeholder-content">
+            <div class="search-animation" id="search-animation">
+              <div class="pulse-ring"></div>
+              <div class="pulse-ring delay-1"></div>
+              <div class="pulse-ring delay-2"></div>
+              <div class="search-icon">🔍</div>
+            </div>
+            <p id="placeholder-text">Click "Next" to find a stranger</p>
+          </div>
+        </div>
+        <!-- Partner reputation badge -->
+        <div class="partner-rep" id="partner-rep" style="display:none;">
+          <span class="rep-icon">⭐</span>
+          <span id="partner-rep-score">50</span>
+        </div>
+      </div>
+
+      <!-- Local Video (Self) - PiP style -->
+      <div class="video-wrapper local-video-wrapper" id="local-video-wrapper">
+        <video id="local-video" autoplay playsinline muted></video>
+        <div class="local-label">You</div>
+      </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+      <div class="controls-left">
+        <button id="btn-mic" class="ctrl-btn" title="Toggle Microphone">
+          <span class="ctrl-icon" id="mic-icon">🎤</span>
+          <span class="ctrl-label">Mic</span>
+        </button>
+        <button id="btn-camera" class="ctrl-btn" title="Toggle Camera">
+          <span class="ctrl-icon" id="camera-icon">📷</span>
+          <span class="ctrl-label">Camera</span>
+        </button>
+      </div>
+
+      <div class="controls-center">
+        <button id="btn-next" class="ctrl-btn ctrl-btn-next" title="Next Stranger">
+          <span class="ctrl-icon">⏭️</span>
+          <span class="ctrl-label">Next</span>
+        </button>
+      </div>
+
+      <div class="controls-right">
+        <button id="btn-like" class="ctrl-btn ctrl-btn-like" title="Like this person" disabled>
+          <span class="ctrl-icon">👍</span>
+          <span class="ctrl-label">Like</span>
+        </button>
+        <button id="btn-report" class="ctrl-btn ctrl-btn-report" title="Report this person" disabled>
+          <span class="ctrl-icon">🚩</span>
+          <span class="ctrl-label">Report</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Report modal -->
+  <div id="report-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <h3>Report User</h3>
+      <p>Why are you reporting this user?</p>
+      <div class="report-reasons">
+        <button class="report-reason-btn" data-reason="inappropriate">Inappropriate behavior</button>
+        <button class="report-reason-btn" data-reason="harassment">Harassment</button>
+        <button class="report-reason-btn" data-reason="spam">Spam / Bot</button>
+        <button class="report-reason-btn" data-reason="other">Other</button>
+      </div>
+      <button class="btn btn-secondary" id="report-cancel-btn">Cancel</button>
+    </div>
+  </div>
+
+  <script type="module" src="/js/chat.js"></script>
+</body>
+</html>
