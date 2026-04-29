@@ -20,6 +20,7 @@ const userWalletDisplay = document.getElementById('user-wallet-display');
 const userRepDisplay = document.getElementById('user-rep-display');
 const userRepBar = document.getElementById('user-rep-bar');
 const walletTypeBadge = document.getElementById('wallet-type-badge');
+const guestLoginBtn = document.getElementById('guest-login-btn');
 
 // ─── Step transitions ───
 function showStep(step) {
@@ -168,6 +169,37 @@ createCustodialBtn.addEventListener('click', async () => {
     showError('Service temporarily unavailable. Please try again later.');
   } finally {
     setLoading(createCustodialBtn, false);
+  }
+});
+
+// ─── Guest Login (bypass wallet) ───
+guestLoginBtn.addEventListener('click', async () => {
+  setLoading(guestLoginBtn, true);
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/guest`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      userToken = data.token;
+      sessionStorage.setItem('knapp_token', userToken);
+      sessionStorage.setItem('knapp_wallet', data.wallet.publicKey);
+      sessionStorage.setItem('knapp_custodial', 'false');
+
+      displayWallet(data.wallet.publicKey, data.reputation, false);
+      walletTypeBadge.textContent = 'Guest';
+      walletTypeBadge.classList.add('custodial');
+      showStep(authStepReady);
+    } else {
+      showError(data.error || 'Failed to create guest session');
+    }
+  } catch (err) {
+    console.error('Guest login error:', err);
+    showError('Service temporarily unavailable. Please try again later.');
+  } finally {
+    setLoading(guestLoginBtn, false);
   }
 });
 

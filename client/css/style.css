@@ -127,6 +127,20 @@ html, body {
   transform: translateY(-1px);
 }
 
+.btn-guest {
+  background: linear-gradient(135deg, rgba(0,212,170,0.12) 0%, rgba(124,92,252,0.08) 100%);
+  border-color: rgba(0,212,170,0.25);
+  color: var(--text-primary);
+}
+.btn-guest:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0,212,170,0.22) 0%, rgba(124,92,252,0.14) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,212,170,0.2);
+}
+.btn-guest .btn-wallet-icon {
+  background: rgba(0,212,170,0.2); color: var(--accent-2);
+}
+
 .btn-wallet-icon {
   width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
   border-radius: var(--radius-sm); font-size: 20px; flex-shrink: 0;

@@ -3,6 +3,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const { v4: uuidv4 } = require('uuid');
 
 const {
   generateChallenge,
@@ -20,18 +21,8 @@ const server = http.createServer(app);
 
 const PORT = process.env.PORT || 3001;
 
-// Allow the deployed frontend origin (Netlify) + local dev
-const PRODUCTION_URL = 'https://syntio.netlify.app';
-const ALLOWED_ORIGINS = [
-  PRODUCTION_URL,
-  ...(process.env.CLIENT_URL && process.env.CLIENT_URL !== PRODUCTION_URL
-    ? [process.env.CLIENT_URL]
-    : []),
-  'http://localhost:5173',
-  'http://127.0.0.1:5173'
-];
-
-app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
+// CORS — allow all origins for testing; lock down later for production
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 // ─── REST API ────────────────────────────────────────────────
@@ -109,11 +100,42 @@ app.post('/api/auth/create-custodial', async (req, res) => {
   }
 });
 
+// ─── Guest login (bypass wallet for testing) ─────────────────
+app.post('/api/auth/guest', (req, res) => {
+  const guestId = `GUEST_${uuidv4().replace(/-/g, '').slice(0, 16).toUpperCase()}`;
+  const token = createSession(guestId, {
+    publicKey: guestId,
+    isCustodial: false,
+    isGuest: true
+  });
+
+  console.log(`👤 Guest joined: ${guestId}`);
+
+  res.json({
+    success: true,
+    token,
+    wallet: { publicKey: guestId },
+    reputation: 50,
+    isGuest: true
+  });
+});
+
 // Get session info
 app.get('/api/auth/session', async (req, res) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
   const session = getSession(token);
   if (!session) return res.status(401).json({ error: 'Invalid session' });
+
+  // Guest sessions get default reputation
+  if (session.isGuest) {
+    return res.json({
+      publicKey: session.publicKey,
+      wallet: { publicKey: session.publicKey },
+      reputation: 50,
+      isCustodial: false,
+      isGuest: true
+    });
+  }
 
   const rep = await reputation.getReputation(session.publicKey);
 
@@ -129,7 +151,7 @@ app.get('/api/auth/session', async (req, res) => {
 
 const io = new Server(server, {
   cors: {
-    origin: ALLOWED_ORIGINS,
+    origin: true,
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -149,12 +171,14 @@ io.on('connection', (socket) => {
       return;
     }
 
-    const rep = await reputation.getReputation(session.publicKey);
+    // Guest users get default reputation
+    const rep = session.isGuest ? 50 : await reputation.getReputation(session.publicKey);
 
     activeConnections.set(socket.id, {
       publicKey: session.publicKey,
       token,
       isCustodial: session.isCustodial,
+      isGuest: session.isGuest || false,
       matchedWith: null,
       sessionStart: null,
       preferences: {}
@@ -346,7 +370,8 @@ io.on('connection', (socket) => {
 
 server.listen(PORT, () => {
   console.log(`\n🚀 Knapp server running on port ${PORT}`);
+  console.log(`   CORS: all origins allowed (testing mode)`);
+  console.log(`   Guest login: enabled`);
   console.log(`   Soroban Contract: ${process.env.SOROBAN_CONTRACT_ID || '(not configured — using in-memory)'}`);
-  console.log(`   Network: ${process.env.STELLAR_NETWORK || 'testnet'}`);
-  console.log(`   Allowed Origins: ${ALLOWED_ORIGINS.join(', ')}\n`);
+  console.log(`   Network: ${process.env.STELLAR_NETWORK || 'testnet'}\n`);
 });
